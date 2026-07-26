@@ -1,7 +1,10 @@
+import java.util.concurrent.locks.ReentrantLock;
+
 public class Conta {
 
     private int numero;
     private double saldo;
+    private final ReentrantLock lock = new ReentrantLock();
 
     public Conta(int numero, double saldo){
         this.numero = numero;
@@ -18,15 +21,25 @@ public class Conta {
     
 
     public void depositar(double valor) {
-        saldo = saldo + valor;
+        lock.lock();
+        try {
+            saldo = saldo + valor;
+        } finally {
+            lock.unlock();
+          }
     }
 
 
     public boolean sacar(double valor){
-        if (valor <=saldo){
-            saldo = saldo - valor;
-            return true;
+        lock.lock();
+        try {
+            if (valor <= saldo) {
+                saldo = saldo - valor;
+                return true;
+            }
+            return false;
+        } finally {
+            lock.unlock();
         }
-        return false;
-    }
+}
 }
