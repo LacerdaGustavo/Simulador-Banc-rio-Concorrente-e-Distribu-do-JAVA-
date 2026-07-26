@@ -21,7 +21,7 @@ public class AtendimentoCliente implements Runnable {
 
             int opcao = 0;
 
-            while (opcao != 4) {
+            while (opcao != 5) {
                 opcao = in.readInt();
 
                 if (opcao == 1) {
@@ -63,6 +63,21 @@ public class AtendimentoCliente implements Runnable {
                         out.writeUTF("Conta não encontrada");
                     }
                 }
+
+                } else if (opcao == 4) {
+                    int numeroOrigem = in.readInt();
+                    int numeroDestino = in.readInt();
+                    double valor = in.readDouble();
+
+                    boolean sucesso = banco.transferir(numeroOrigem, numeroDestino, valor);
+
+                if (sucesso) {
+                    out.writeUTF("Transferência realizada com sucesso.");
+                } else {
+                    out.writeUTF("Falha na transferência: conta inexistente ou saldo insuficiente.");
+                }
+            }
+            
             }
 
             in.close();
