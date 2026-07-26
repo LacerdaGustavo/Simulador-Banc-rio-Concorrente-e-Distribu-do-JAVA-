@@ -47,4 +47,12 @@ public class Conta {
             lock.unlock();
         }
     }
+
+    public void travar() {
+        lock.lock();
+    }
+
+    public void destravar() {
+        lock.unlock();
+    }
 }
