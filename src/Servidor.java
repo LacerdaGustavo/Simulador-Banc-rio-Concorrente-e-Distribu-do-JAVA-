@@ -15,13 +15,14 @@ public class Servidor {
         ServerSocket servidor = new ServerSocket(4444);
         System.out.println("Servidor iniciado");
 
-        // Por enquanto ainda aceita só UM cliente (isso muda no subcommit 1.2)
+    while (true) {
         Socket cliente = servidor.accept();
-        System.out.println("Cliente conectado");
+        System.out.println("Cliente conectado: " + cliente.getInetAddress());
 
-        // Delega todo o atendimento desse cliente pra classe AtendimentoCliente
         AtendimentoCliente atendimento = new AtendimentoCliente(cliente, banco);
-        atendimento.run(); // chamado direto (sem thread) só pra validar que a extração funcionou
+        Thread thread = new Thread(atendimento);
+        thread.start();
+    }
 
         servidor.close();
     }
