@@ -15,8 +15,13 @@ public class Conta {
         return numero;
     }
     
-    public double getSaldo(){
-        return saldo;
+    public double getSaldo() {
+        lock.lock();
+        try {
+            return saldo;
+        } finally {
+            lock.unlock();
+        }
     }
     
 
@@ -30,7 +35,7 @@ public class Conta {
     }
 
 
-    public boolean sacar(double valor){
+    public boolean sacar(double valor) {
         lock.lock();
         try {
             if (valor <= saldo) {
@@ -41,5 +46,5 @@ public class Conta {
         } finally {
             lock.unlock();
         }
-}
+    }
 }
