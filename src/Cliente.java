@@ -17,12 +17,13 @@ public class Cliente {
         Scanner teclado = new Scanner(System.in);
         int opcao = 0;
 
-        while(opcao != 4){
+        while(opcao != 5){
             System.out.println("\n---- CAIXA ELETRÔNICO ----");
             System.out.println("1 - Consultar saldo");
             System.out.println("2 - Depositar ");
             System.out.println("3 - Sacar ");
-            System.out.println("4 - Sair ");
+            System.out.println("4 - Transferir ");
+            System.out.println("5 - Sair ");
 
             opcao = teclado.nextInt();
             out.writeInt(opcao);
@@ -59,10 +60,27 @@ public class Cliente {
                 out.writeDouble(valor);
                 System.out.println(in.readUTF());
             }
+            
 
+            //Transferir
+            else if (opcao == 4) {
+                System.out.println("Número da conta de origem: ");
+                int numeroOrigem = teclado.nextInt();
+
+                System.out.println("Número da conta de destino: ");
+                int numeroDestino = teclado.nextInt();
+
+                System.out.println("Valor a transferir: ");
+                double valor = teclado.nextDouble();
+
+                out.writeInt(numeroOrigem);
+                out.writeInt(numeroDestino);
+                out.writeDouble(valor);
+                System.out.println(in.readUTF());
+            }
 
             //Sair
-            else if (opcao == 4){
+            else if (opcao == 5) {
                 System.out.println("Encerrando a conexão");
             }
 
