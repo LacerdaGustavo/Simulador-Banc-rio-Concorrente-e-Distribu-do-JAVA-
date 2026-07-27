@@ -4,98 +4,31 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
 
-
-
 public class Cliente {
+    public static void main(String[] args) {
+        try (Socket socket = new Socket("127.0.0.1", 4444);
+             DataInputStream in = new DataInputStream(socket.getInputStream());
+             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+             Scanner scanner = new Scanner(System.in)) {
 
-    public static void main(String[] args) throws IOException {
-        Socket socket = new Socket("localhost",4444);
-        
-        DataInputStream in = new DataInputStream(socket.getInputStream());
-        DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            System.out.println("=== ATM Conectado ===");
+            boolean executando = true;
 
-        Scanner teclado = new Scanner(System.in);
-        int opcao = 0;
+            while (executando) {
+                System.out.print("> ");
+                String comando = scanner.nextLine();
+                if (comando.trim().isEmpty()) continue;
 
-        while(opcao != 5){
-            System.out.println("\n---- CAIXA ELETRÔNICO ----");
-            System.out.println("1 - Consultar saldo");
-            System.out.println("2 - Depositar ");
-            System.out.println("3 - Sacar ");
-            System.out.println("4 - Transferir ");
-            System.out.println("5 - Sair ");
+                out.writeUTF(comando);
+                String resposta = in.readUTF();
+                System.out.println("[Servidor]: " + resposta);
 
-            opcao = teclado.nextInt();
-            out.writeInt(opcao);
-
-
-            //Consultar
-            if (opcao == 1){
-                System.out.println("Número da conta: ");
-                int numeroConta = teclado.nextInt();
-                out.writeInt(numeroConta);
-                System.out.println(in.readUTF());
+                if (comando.toUpperCase().startsWith("LOGOUT")) {
+                    executando = false;
+                }
             }
-
-            //Depositar
-            else if (opcao == 2) {
-                System.out.println("Número da conta: ");
-                int numeroConta = teclado.nextInt();
-
-                System.out.println("Valor do depósito: ");
-                double valor = teclado.nextDouble();
-                out.writeInt(numeroConta);
-                out.writeDouble(valor);
-                System.out.println(in.readUTF());
-            }
-
-            //Sacar
-            else if (opcao == 3) {
-                System.out.println("Número da conta: ");
-                int numeroConta = teclado.nextInt();
-
-                System.out.println("Valor do saque: ");
-                double valor = teclado.nextDouble();
-                out.writeInt(numeroConta);
-                out.writeDouble(valor);
-                System.out.println(in.readUTF());
-            }
-            
-
-            //Transferir
-            else if (opcao == 4) {
-                System.out.println("Número da conta de origem: ");
-                int numeroOrigem = teclado.nextInt();
-
-                System.out.println("Número da conta de destino: ");
-                int numeroDestino = teclado.nextInt();
-
-                System.out.println("Valor a transferir: ");
-                double valor = teclado.nextDouble();
-
-                out.writeInt(numeroOrigem);
-                out.writeInt(numeroDestino);
-                out.writeDouble(valor);
-                System.out.println(in.readUTF());
-            }
-
-            //Sair
-            else if (opcao == 5) {
-                System.out.println("Encerrando a conexão");
-            }
-
-            //Opção inválida
-            else{
-                System.out.println("Opção inválida");
-            }
+        } catch (IOException e) {
+            System.err.println("Erro de conexão: " + e.getMessage());
         }
-
-
-        teclado.close();
-        in.close();
-        out.close();
-        socket.close();  
-    
-    
     }
 }
