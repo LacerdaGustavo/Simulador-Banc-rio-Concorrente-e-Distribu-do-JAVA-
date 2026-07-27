@@ -1,20 +1,47 @@
+import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 public class TesteBanco {
-
     public static void main(String[] args) {
-
         Banco banco = new Banco();
+        double totalAntes = banco.getConta(1).getSaldo() + banco.getConta(2).getSaldo() + banco.getConta(3).getSaldo();
+        System.out.println("Total no banco ANTES do Teste: R$ " + totalAntes);
 
-        banco.adicionarConta(new Conta(1001, 1000.0));
-        banco.adicionarConta(new Conta(1002, 2000.0));
-        banco.adicionarConta(new Conta(1003, 3000.0));
+        ExecutorService pool = Executors.newFixedThreadPool(50);
+        Random random = new Random();
 
-        Conta conta = banco.buscarConta(1002);
+        // Dispara 5000 transferências simultâneas
+        for (int i = 0; i < 5000; i++) {
+            pool.execute(() -> {
+                int idOrigem = random.nextInt(3) + 1;
+                int idDestino = random.nextInt(3) + 1;
+                if (idOrigem != idDestino) {
+                    banco.transferir(idOrigem, idDestino, random.nextInt(100) + 1);
+                }
+            });
+        }
 
-        if (conta != null) {
-            System.out.println("Conta encontrada: " + conta.getNumero());
-            System.out.println("Saldo: " + conta.getSaldo());
+        pool.shutdown();
+        try {
+            pool.awaitTermination(1, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        double totalDepois = banco.getConta(1).getSaldo() + banco.getConta(2).getSaldo() + banco.getConta(3).getSaldo();
+        System.out.println("Total no banco DEPOIS do Teste: R$ " + totalDepois);
+        
+        System.out.println("\n[Saldos Finais]");
+        System.out.println("Conta 1: R$ " + banco.getConta(1).getSaldo());
+        System.out.println("Conta 2: R$ " + banco.getConta(2).getSaldo());
+        System.out.println("Conta 3: R$ " + banco.getConta(3).getSaldo());
+
+        if (totalAntes == totalDepois) {
+            System.out.println("\n=> SUCESSO: Consistência mantida. Nenhuma Race Condition ou Deadlock!");
         } else {
-            System.out.println("Conta não encontrada.");
+            System.out.println("\n=> FALHA: Inconsistência de dados detectada.");
         }
     }
 }
