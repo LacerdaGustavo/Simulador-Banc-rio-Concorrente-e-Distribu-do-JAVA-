@@ -1,70 +1,49 @@
-import java.util.ArrayList;
-
+import java.util.HashMap;
+import java.util.Map;
 
 public class Banco {
+    private final Map<Integer, Conta> contas = new HashMap<>();
 
-    private ArrayList<Conta> contas; //Lista que armazena objetos do tipo conta
-
-    public Banco(){
-        contas = new ArrayList<Conta>(); //Construtor inicia com lista vazia
+    public Banco() {
+        // Populando contas iniciais para testes
+        contas.put(1, new Conta(1, 1000.0, "senha123"));
+        contas.put(2, new Conta(2, 1000.0, "senha456"));
+        contas.put(3, new Conta(3, 1000.0, "senha789"));
     }
 
-    public void adicionarConta(Conta conta){
-        contas.add(conta);
+    public Conta getConta(int id) {
+        return contas.get(id);
     }
 
-    public Conta buscarConta(int numero){
-        for (int i=0; i < contas.size(); i++){
-            Conta conta = contas.get(i);
-            if(conta.getNumero() == numero){
-                return conta;
-            }
+    public boolean transferir(int idOrigem, int idDestino, double valor) {
+        Conta contaOrigem = contas.get(idOrigem);
+        Conta contaDestino = contas.get(idDestino);
+
+        if (contaOrigem == null || contaDestino == null || idOrigem == idDestino || valor <= 0) {
+            return false;
         }
-        return null;
-    }
 
-    public boolean transferir(int numeroOrigem, int numeroDestino, double valor) {
-    Conta origem = buscarConta(numeroOrigem);
-    Conta destino = buscarConta(numeroDestino);
+        // PREVENÇÃO DE DEADLOCK: Ordenação de Recursos por ID
+        Conta primeiraConta = (contaOrigem.getId() < contaDestino.getId()) ? contaOrigem : contaDestino;
+        Conta segundaConta = (contaOrigem.getId() < contaDestino.getId()) ? contaDestino : contaOrigem;
 
-    // Se alguma das contas não existe, não há o que transferir
-    if (origem == null || destino == null) {
-        return false;
-    }
-
-    // Regra anti-deadlock: sempre trava primeiro a conta de MENOR número,
-    // independente de qual é origem ou destino. Assim, se dois clientes
-    // fizerem transferências em direções opostas ao mesmo tempo (A→B e B→A),
-    // ambos vão tentar travar a mesma conta primeiro — nunca formam
-    // espera circular.
-    Conta primeira = (origem.getNumero() < destino.getNumero()) ? origem : destino;
-    Conta segunda = (origem.getNumero() < destino.getNumero()) ? destino : origem;
-
-    primeira.travar();
-    try {
-        segunda.travar();
+        primeiraConta.getLock().lock();
         try {
-            // Tenta sacar da origem; sacar() já é protegido internamente
-            // (ReentrantLock permite re-travar pela mesma thread)
-            boolean sucesso = origem.sacar(valor);
-
-            if (sucesso) {
-                destino.depositar(valor);
-                return true;
-            } else {
-                // Saldo insuficiente: transferência cancelada, nada foi debitado
+            segundaConta.getLock().lock();
+            try {
+                // Seção Crítica Atômica e Segura
+                if (contaOrigem.getSaldo() >= valor) {
+                    contaOrigem.sacar(valor);
+                    contaDestino.depositar(valor);
+                    return true;
+                }
                 return false;
+                
+            } finally {
+                segundaConta.getLock().unlock();
             }
         } finally {
-            segunda.destravar();
+            primeiraConta.getLock().unlock();
         }
-    } finally {
-        primeira.destravar();
     }
-}
-
-
-
-
-  
 }
