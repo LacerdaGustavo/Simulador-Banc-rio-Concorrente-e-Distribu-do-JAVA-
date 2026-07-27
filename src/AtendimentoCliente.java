@@ -4,88 +4,81 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class AtendimentoCliente implements Runnable {
+    private final Socket socket;
+    private final Banco banco;
+    private boolean conectado;
+    private Conta contaLogada;
 
-    private Socket cliente;
-    private Banco banco;
-
-    public AtendimentoCliente(Socket cliente, Banco banco) {
-        this.cliente = cliente;
+    public AtendimentoCliente(Socket socket, Banco banco) {
+        this.socket = socket;
         this.banco = banco;
+        this.conectado = true;
     }
 
     @Override
     public void run() {
-        try {
-            DataInputStream in = new DataInputStream(cliente.getInputStream());
-            DataOutputStream out = new DataOutputStream(cliente.getOutputStream());
+        try (DataInputStream in = new DataInputStream(socket.getInputStream());
+             DataOutputStream out = new DataOutputStream(socket.getOutputStream())) {
 
-            int opcao = 0;
-
-            while (opcao != 5) {
-                opcao = in.readInt();
-
-                if (opcao == 1) {
-                    int numeroConta = in.readInt();
-                    Conta conta = banco.buscarConta(numeroConta);
-
-                    if (conta != null) {
-                        out.writeUTF("Saldo: " + conta.getSaldo());
-                    } else {
-                        out.writeUTF("Conta não encontrada");
-                    }
-
-                } else if (opcao == 2) {
-                    int numeroConta = in.readInt();
-                    double valor = in.readDouble();
-                    Conta conta = banco.buscarConta(numeroConta);
-
-                    if (conta != null) {
-                        conta.depositar(valor);
-                        out.writeUTF("Depósito realizado. \n Saldo: R$ " + conta.getSaldo());
-                    } else {
-                        out.writeUTF("Conta não encontrada");
-                    }
-
-                } else if (opcao == 3) {
-                    int numeroConta = in.readInt();
-                    double valor = in.readDouble();
-                    Conta conta = banco.buscarConta(numeroConta);
-
-                    if (conta != null) {
-                        boolean resultado = conta.sacar(valor);
-
-                        if (resultado) {
-                            out.writeUTF("Saque realizado. \n Saldo: R$ " + conta.getSaldo());
-                        } else {
-                            out.writeUTF("Saldo insuficiente");
-                        }
-                    } else {
-                        out.writeUTF("Conta não encontrada");
-                    }
-                }
-
-                } else if (opcao == 4) {
-                    int numeroOrigem = in.readInt();
-                    int numeroDestino = in.readInt();
-                    double valor = in.readDouble();
-
-                    boolean sucesso = banco.transferir(numeroOrigem, numeroDestino, valor);
-
-                if (sucesso) {
-                    out.writeUTF("Transferência realizada com sucesso.");
-                } else {
-                    out.writeUTF("Falha na transferência: conta inexistente ou saldo insuficiente.");
-                }
+            while (conectado) {
+                String requisicao = in.readUTF();
+                String resposta = processarComando(requisicao);
+                out.writeUTF(resposta);
             }
-            
-            }
-
-            in.close();
-            out.close();
-            cliente.close();
 
         } catch (IOException e) {
-            System.out.println("Erro no atendimento do cliente: " + e.getMessage());
+            System.out.println("Cliente desconectado: " + socket.getInetAddress());
+        } finally {
+            try {
+                if (socket != null && !socket.isClosed()) socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private String processarComando(String comando) {
+        String[] partes = comando.split(";");
+        String acao = partes[0].toUpperCase();
+
+        try {
+            switch (acao) {
+                case "LOGIN":
+                    if (partes.length != 3) return "ERRO;Formato: LOGIN;CONTA;SENHA";
+                    Conta conta = banco.getConta(Integer.parseInt(partes[1]));
+                    if (conta != null && conta.autenticar(partes[2])) {
+                        this.contaLogada = conta;
+                        return "SUCESSO;Logado na conta " + conta.getId();
+                    }
+                    return "ERRO;Credenciais invalidas";
+
+                case "SACAR":
+                    if (contaLogada == null) return "ERRO;Nao autenticado";
+                    double valorSaque = Double.parseDouble(partes[1]);
+                    if (contaLogada.sacar(valorSaque)) {
+                        return "SUCESSO;Novo saldo: " + contaLogada.getSaldo();
+                    }
+                    return "ERRO;Saldo insuficiente";
+
+                case "TRANSF":
+                    if (contaLogada == null) return "ERRO;Nao autenticado";
+                    int idDestino = Integer.parseInt(partes[1]);
+                    double valorTransf = Double.parseDouble(partes[2]);
+                    if (banco.transferir(contaLogada.getId(), idDestino, valorTransf)) {
+                        return "SUCESSO;Novo saldo: " + contaLogada.getSaldo();
+                    }
+                    return "ERRO;Falha na transferencia";
+
+                case "LOGOUT":
+                    this.conectado = false;
+                    this.contaLogada = null;
+                    return "SUCESSO;Desconectado";
+
+                default:
+                    return "ERRO;Comando invalido";
+            }
+        } catch (Exception e) {
+            return "ERRO;Falha no processamento numérico";
         }
     }
 }
