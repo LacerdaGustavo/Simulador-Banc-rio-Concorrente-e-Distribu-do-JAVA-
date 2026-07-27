@@ -1,20 +1,28 @@
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Conta {
-
-    private int numero;
+    private final int id;
     private double saldo;
-    private final ReentrantLock lock = new ReentrantLock();
-
-    public Conta(int numero, double saldo){
-        this.numero = numero;
-        this.saldo = saldo;
-    }
-
-    public int getNumero(){
-        return numero;
-    }
+    private final String senha;
     
+    // Trava de exclusão mútua específica para esta conta
+    private final Lock lock = new ReentrantLock();
+
+    public Conta(int id, double saldoInicial, String senha) {
+        this.id = id;
+        this.saldo = saldoInicial;
+        this.senha = senha;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public boolean autenticar(String senhaTentativa) {
+        return this.senha.equals(senhaTentativa);
+    }
+
     public double getSaldo() {
         lock.lock();
         try {
@@ -23,36 +31,33 @@ public class Conta {
             lock.unlock();
         }
     }
-    
-
-    public void depositar(double valor) {
-        lock.lock();
-        try {
-            saldo = saldo + valor;
-        } finally {
-            lock.unlock();
-          }
-    }
-
 
     public boolean sacar(double valor) {
-        lock.lock();
+        lock.lock(); // Início da Seção Crítica
         try {
-            if (valor <= saldo) {
-                saldo = saldo - valor;
+            if (valor > 0 && saldo >= valor) {
+                saldo -= valor;
                 return true;
             }
             return false;
         } finally {
-            lock.unlock();
+            lock.unlock(); // Fim da Seção Crítica garantido no finally
         }
     }
 
-    public void travar() {
-        lock.lock();
+    public void depositar(double valor) {
+        lock.lock(); // Início da Seção Crítica
+        try {
+            if (valor > 0) {
+                saldo += valor;
+            }
+        } finally {
+            lock.unlock(); 
+        }
     }
-
-    public void destravar() {
-        lock.unlock();
+    
+    // Exposto estritamente para a coordenação de deadlocks no Banco
+    public Lock getLock() {
+        return lock;
     }
 }
