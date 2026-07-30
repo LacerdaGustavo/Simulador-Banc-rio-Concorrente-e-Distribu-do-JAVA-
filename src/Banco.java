@@ -2,7 +2,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Banco {
-    private final Map<Integer, Conta> contas = new HashMap<>();
+    private final Map<Integer, Conta> contas = new HashMap<>(); //Armazena as contas
 
     public Banco() {
         // Populando contas iniciais para testes
@@ -24,6 +24,7 @@ public class Banco {
         }
 
         // PREVENÇÃO DE DEADLOCK: Ordenação de Recursos por ID
+        //Sempre bloqueando primeiro a conta de menor ID e depois a de ID maior, evita a espera circular
         Conta primeiraConta = (contaOrigem.getId() < contaDestino.getId()) ? contaOrigem : contaDestino;
         Conta segundaConta = (contaOrigem.getId() < contaDestino.getId()) ? contaDestino : contaOrigem;
 

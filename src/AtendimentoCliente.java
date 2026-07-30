@@ -59,7 +59,22 @@ public class AtendimentoCliente implements Runnable {
                         return "SUCESSO;Novo saldo: " + contaLogada.getSaldo();
                     }
                     return "ERRO;Saldo insuficiente";
+                
+                    
 
+                case "DEPOSITAR":
+                    if (contaLogada == null)
+                        return "ERRO;Nao autenticado";
+
+                    double valorDeposito = Double.parseDouble(partes[1]);
+
+                    if (valorDeposito <= 0)
+                        return "ERRO;Valor invalido";
+
+                    contaLogada.depositar(valorDeposito);
+
+                    return "SUCESSO;Novo saldo: " + contaLogada.getSaldo();
+                                
                 case "TRANSF":
                     if (contaLogada == null) return "ERRO;Nao autenticado";
                     int idDestino = Integer.parseInt(partes[1]);
@@ -68,6 +83,14 @@ public class AtendimentoCliente implements Runnable {
                         return "SUCESSO;Novo saldo: " + contaLogada.getSaldo();
                     }
                     return "ERRO;Falha na transferencia";
+
+                
+                case "SALDO":
+                    if (contaLogada == null)
+                        return "ERRO;Nao autenticado";
+
+                    return "SUCESSO;Saldo: " + contaLogada.getSaldo();
+
 
                 case "LOGOUT":
                     this.conectado = false;
