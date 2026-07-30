@@ -50,7 +50,7 @@ public class AtendimentoCliente implements Runnable {
                         this.contaLogada = conta;
                         return "SUCESSO;Logado na conta " + conta.getId();
                     }
-                    return "ERRO;Credenciais invalidas";
+                    return "ERRO;\nCredenciais invalidas";
 
                 case "SACAR":
                     if (contaLogada == null) return "ERRO;Nao autenticado";
