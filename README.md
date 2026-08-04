@@ -9,11 +9,6 @@ e integrada ao servidor bancario concorrente/distribuido ja existente
 
 ```
 insidebank-javafx/
-├── pom.xml
-├── download-assets.sh          <- baixa as imagens/icones do Figma (rode antes de tudo)
-├── THEME_DESIGN_TOKENS.md       <- cores, gradientes, tipografia extraidos do Figma
-├── ROADMAP_TELAS.md             <- catalogo das 44 telas encontradas + status
-├── ASSETS_TODO.md
 └── src/main/
     ├── java/
     │   ├── Servidor.java, Banco.java, Conta.java,          <- backend original,
@@ -32,34 +27,9 @@ insidebank-javafx/
     └── resources/
         ├── fxml/login.fxml, dashboard.fxml
         ├── css/theme-dark.css, theme-light.css
-        ├── fonts/   <- coloque aqui os .ttf do Montserrat e Inter (ver abaixo)
-        └── images/  <- destino do download-assets.sh
+        ├── fonts/   
+        └── images/ 
 ```
-
-## Passo a passo para rodar
-
-### 1. Baixe as fontes (Google Fonts)
-
-- Montserrat: https://fonts.google.com/specimen/Montserrat → baixe o `.zip`,
-  extraia e copie para `src/main/resources/fonts/`:
-  - `Montserrat-Regular.ttf`
-  - `Montserrat-Medium.ttf`
-  - `Montserrat-SemiBold.ttf`
-- Inter: https://fonts.google.com/specimen/Inter → copie:
-  - `Inter-Regular.ttf`
-
-### 2. Baixe as imagens/icones do Figma
-
-```bash
-chmod +x download-assets.sh
-./download-assets.sh
-```
-
-As URLs foram geradas em 01/08/2026 e expiram em ~7 dias. Se o script
-reportar falhas (arquivo 0 bytes), avise para re-extrairmos aquele node do
-Figma.
-
-### 3. Rode o servidor bancario (backend, sem alteracoes)
 
 Em um terminal:
 ```bash
@@ -79,7 +49,7 @@ mvn clean javafx:run
 
 Faça login com a conta `1` e senha `senha123` (ou `2`/`senha456`, `3`/`senha789`).
 
-## O que ja funciona de verdade (nao e so visual)
+## Funcionalidades
 
 - **Login** → envia `LOGIN;conta;senha` para o servidor, depois passa por uma
   etapa de **verificacao em 2 fatores** (codigo mostrado em tela - modo
@@ -108,19 +78,9 @@ As telas de Investimentos, Poupanca, Emprestimo, Cartao e Estatisticas
 continuam mostrando o aviso "tela ainda nao implementada" — ver
 `ROADMAP_TELAS.md`.
 
-### Sobre a fidelidade visual desta rodada
 
-O limite de chamadas do MCP do Figma (plano Starter) foi atingido no meio do
-trabalho. **Login, Dashboard e o fluxo de Transferencia** foram extraidos e
-implementados com fidelidade pixel-a-pixel confirmada. **Extrato, Deposito/
-Saque, Configuracoes, Cadastro e Login 2FA** foram construidos seguindo
-rigorosamente o mesmo design system (`THEME_DESIGN_TOKENS.md`), mas sem
-confirmar o layout exato contra o node do Figma correspondente - ver
-`ROADMAP_TELAS.md` para o detalhe por tela.
-
-## Proximas etapas (fora do escopo desta entrega, conforme combinado)
+## Proximas etapas (fora do escopo desta entrega)
 
 - Hash de senha (o `pom.xml` ja inclui `jbcrypt` como dependencia, pronto para uso).
 - Persistencia em banco de dados (hoje as contas sao fixas no construtor de `Banco.java`).
 - Suporte a multiplos bancos.
-- Novas telas conforme priorizacao em `ROADMAP_TELAS.md`.
