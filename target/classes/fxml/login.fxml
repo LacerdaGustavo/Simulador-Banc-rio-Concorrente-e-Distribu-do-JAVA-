@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Line?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<!--
+  Tela: "Login | 1"  (Figma node 115:2)
+  Coordenadas identicas as extraidas do Figma (frame 1440x1024), preservando
+  fidelidade pixel-a-pixel. Ver THEME_DESIGN_TOKENS.md para a origem de cada cor.
+-->
+<Pane prefWidth="1440.0" prefHeight="1024.0"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.insidebank.controller.LoginController">
+
+    <!-- Logo -->
+    <HBox alignment="CENTER" spacing="10" layoutX="65" layoutY="120" prefHeight="32">
+        <FontIcon iconLiteral="fth-credit-card" iconSize="24" iconColor="WHITE"/>
+        <Label text="InsideBank" styleClass="text-display" style="-fx-font-size:22px;"/>
+    </HBox>
+
+    <!-- Titulo -->
+    <Label text="Entre com sua Conta" styleClass="text-display, text-h1"
+           layoutX="65" layoutY="196"/>
+
+    <!-- Ilustracao lateral -->
+    <StackPane layoutX="720" layoutY="46" prefWidth="678" prefHeight="932"
+               style="-fx-background-color: linear-gradient(to bottom right, rgba(255,248,83,0.15), rgba(0,0,0,0.4)); -fx-background-radius:24;">
+        <ImageView fitWidth="678" fitHeight="932" preserveRatio="false">
+            <image>
+                <Image url="@../images/Rectangle%207.png"/>
+            </image>
+        </ImageView>
+    </StackPane>
+
+    <!-- Campo CPF -->
+    <Label text="CPF" styleClass="text-body" layoutX="65" layoutY="284"/>
+    <TextField fx:id="txtConta" promptText="Digite o seu CPF (ou numero da conta)"
+               styleClass="input-field"
+               layoutX="65" layoutY="312" prefWidth="580" prefHeight="60"/>
+
+    <!-- Campo Senha -->
+    <Label text="Senha" styleClass="text-body" layoutX="65" layoutY="397"/>
+    <PasswordField fx:id="txtSenha" promptText="Digite a sua Senha"
+                    styleClass="input-field"
+                    layoutX="65" layoutY="424" prefWidth="580" prefHeight="60"/>
+
+    <!-- Mensagem de erro (nao existe no mock estatico - adicionado para feedback real) -->
+    <Label fx:id="lblErro" styleClass="text-small" style="-fx-text-fill:#FF6B6B;"
+           layoutX="65" layoutY="487" prefWidth="580" visible="false" managed="false"/>
+
+    <!-- Checkbox "confiar neste computador" -->
+    <CheckBox fx:id="chkConfiar" styleClass="check-gold"
+              layoutX="66" layoutY="513"/>
+    <Label text="Confiar neste computador por 14 dias." styleClass="text-body"
+           layoutX="105" layoutY="513"/>
+
+    <!-- Botao primario -->
+    <Button fx:id="btnLogin" text="Fazer Login" styleClass="btn-primary"
+            onAction="#onFazerLogin"
+            layoutX="65" layoutY="579" prefWidth="580" prefHeight="60"/>
+
+    <Label styleClass="text-small, text-muted" wrapText="true"
+           layoutX="65" layoutY="653" prefWidth="580" alignment="CENTER" style="-fx-text-alignment:center;"
+           text="Ao fazer Login, voce concorda com nossos Termos de Servico e Politica de Privacidade"/>
+
+    <Line startX="0" endX="580" layoutX="65" layoutY="710" stroke="rgba(255,255,255,0.1)"/>
+
+    <!-- Botao secundario -->
+    <Button text="Cadastrar-se" styleClass="btn-glass"
+            onAction="#onCadastrarSe"
+            layoutX="65" layoutY="752" prefWidth="580" prefHeight="60"/>
+
+    <Label text="Todos os direitos reservados. (c) InsideBank 2024"
+           styleClass="text-small, text-muted"
+           layoutX="65" layoutY="963" prefWidth="580" alignment="CENTER" style="-fx-text-alignment:center;"/>
+
+</Pane>
