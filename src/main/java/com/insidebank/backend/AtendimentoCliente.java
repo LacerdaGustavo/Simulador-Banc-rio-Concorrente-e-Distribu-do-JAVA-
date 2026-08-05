@@ -46,11 +46,14 @@ public class AtendimentoCliente implements Runnable {
         try {
             switch (acao) {
                 case "LOGIN":
-                    if (partes.length != 3) return "ERRO;Formato: LOGIN;CONTA;SENHA";
-                    Conta conta = banco.getConta(Integer.parseInt(partes[1]));
-                    if (conta != null && conta.autenticar(partes[2])) {
+                    // Formato: LOGIN;BANCO;CONTA;SENHA
+                    if (partes.length != 4) return "ERRO;Formato: LOGIN;BANCO;CONTA;SENHA";
+                    int bancoLogin = Integer.parseInt(partes[1]);
+                    int contaLoginId = Integer.parseInt(partes[2]);
+                    Conta conta = banco.getConta(bancoLogin, contaLoginId);
+                    if (conta != null && conta.autenticar(partes[3])) {
                         this.contaLogada = conta;
-                        return "SUCESSO;Logado na conta " + conta.getId();
+                        return "SUCESSO;Logado no banco " + conta.getBancoId() + ", conta " + conta.getId();
                     }
                     return "ERRO;\nCredenciais invalidas";
 
@@ -61,8 +64,6 @@ public class AtendimentoCliente implements Runnable {
                         return "SUCESSO;Novo saldo: " + contaLogada.getSaldo();
                     }
                     return "ERRO;Saldo insuficiente";
-                
-                    
 
                 case "DEPOSITAR":
                     if (contaLogada == null)
@@ -76,23 +77,24 @@ public class AtendimentoCliente implements Runnable {
                     banco.depositar(contaLogada, valorDeposito);
 
                     return "SUCESSO;Novo saldo: " + contaLogada.getSaldo();
-                                
+
                 case "TRANSF":
+                    // Formato: TRANSF;BANCO_DESTINO;CONTA_DESTINO;VALOR
                     if (contaLogada == null) return "ERRO;Nao autenticado";
-                    int idDestino = Integer.parseInt(partes[1]);
-                    double valorTransf = Double.parseDouble(partes[2]);
-                    if (banco.transferir(contaLogada.getId(), idDestino, valorTransf)) {
+                    if (partes.length != 4) return "ERRO;Formato: TRANSF;BANCO_DESTINO;CONTA_DESTINO;VALOR";
+                    int bancoDestino = Integer.parseInt(partes[1]);
+                    int idDestino = Integer.parseInt(partes[2]);
+                    double valorTransf = Double.parseDouble(partes[3]);
+                    if (banco.transferir(contaLogada.getBancoId(), contaLogada.getId(), bancoDestino, idDestino, valorTransf)) {
                         return "SUCESSO;Novo saldo: " + contaLogada.getSaldo();
                     }
                     return "ERRO;Falha na transferencia";
 
-                
                 case "SALDO":
                     if (contaLogada == null)
                         return "ERRO;Nao autenticado";
 
                     return "SUCESSO;Saldo: " + contaLogada.getSaldo();
-
 
                 case "LOGOUT":
                     this.conectado = false;
@@ -100,8 +102,6 @@ public class AtendimentoCliente implements Runnable {
                     return "SUCESSO;Desconectado";
 
                 case "EXTRATO":
-                    // Comando novo (nao existia no protocolo original) - suporta
-                    // a tela de Extrato da interface JavaFX. Ver Conta.getHistorico().
                     if (contaLogada == null)
                         return "ERRO;Nao autenticado";
                     List<String> historico = contaLogada.getHistorico();
@@ -110,28 +110,30 @@ public class AtendimentoCliente implements Runnable {
                     return "SUCESSO;" + String.join("|", historico);
 
                 case "NOME":
-                    // Comando novo - consulta o nome de uma conta pelo numero,
-                    // usado na tela de confirmacao de Transferencia (mostrar
-                    // o nome do destinatario antes de confirmar).
+                    // Formato: NOME;BANCO;CONTA
                     if (contaLogada == null)
                         return "ERRO;Nao autenticado";
-                    if (partes.length != 2)
-                        return "ERRO;Formato: NOME;CONTA";
-                    Conta contaConsultada = banco.getConta(Integer.parseInt(partes[1]));
+                    if (partes.length != 3)
+                        return "ERRO;Formato: NOME;BANCO;CONTA";
+                    int bancoConsultado = Integer.parseInt(partes[1]);
+                    int contaConsultadaId = Integer.parseInt(partes[2]);
+                    Conta contaConsultada = banco.getConta(bancoConsultado, contaConsultadaId);
                     if (contaConsultada == null)
                         return "ERRO;Conta nao encontrada";
                     return "SUCESSO;" + contaConsultada.getNome();
 
                 case "CADASTRAR":
-                    // Comando novo - suporta a tela de Cadastro da interface JavaFX.
-                    // Nao exige login (assim como LOGIN). Formato: CADASTRAR;NOME;SENHA
-                    if (partes.length != 3)
-                        return "ERRO;Formato: CADASTRAR;NOME;SENHA";
-                    if (partes[1].trim().isEmpty() || partes[2].trim().isEmpty())
+                    // Formato: CADASTRAR;BANCO;NOME;SENHA
+                    if (partes.length != 4)
+                        return "ERRO;Formato: CADASTRAR;BANCO;NOME;SENHA";
+                    int bancoCadastro = Integer.parseInt(partes[1]);
+                    if (partes[2].trim().isEmpty() || partes[3].trim().isEmpty())
                         return "ERRO;Nome e senha nao podem ser vazios";
-                    Conta novaConta = banco.criarConta(partes[1].trim(), partes[2]);
-                    return "SUCESSO;Conta criada com numero " + novaConta.getId()
-                            + ". Guarde este numero para fazer login.";
+                    Conta novaConta = banco.criarConta(bancoCadastro, partes[2].trim(), partes[3]);
+                    if (novaConta == null)
+                        return "ERRO;Banco informado nao existe";
+                    return "SUCESSO;Conta criada no banco " + novaConta.getBancoId() + " com numero " + novaConta.getId()
+                            + ". Guarde estes dados para fazer login.";
 
                 default:
                     return "ERRO;Comando invalido";
