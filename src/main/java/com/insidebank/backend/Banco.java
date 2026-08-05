@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.mindrot.jbcrypt.BCrypt;
 
 import com.insidebank.database.ContaDAO;
 
@@ -23,10 +24,9 @@ public class Banco {
         List<Conta> contasBanco = dao.listarTodas();
 
         if (contasBanco.isEmpty()) {
-
-            Conta c1 = new Conta(1, 1000.0, "senha123", "Cliente Teste 1");
-            Conta c2 = new Conta(2, 1000.0, "senha456", "Cliente Teste 2");
-            Conta c3 = new Conta(3, 1000.0, "senha789", "Cliente Teste 3");
+            Conta c1 = new Conta(1, 1000.0, BCrypt.hashpw("senha123", BCrypt.gensalt()), "Cliente Teste 1");
+            Conta c2 = new Conta(2, 1000.0, BCrypt.hashpw("senha456", BCrypt.gensalt()), "Cliente Teste 2");
+            Conta c3 = new Conta(3, 1000.0, BCrypt.hashpw("senha789", BCrypt.gensalt()), "Cliente Teste 3");
 
             dao.inserir(c1);
             dao.inserir(c2);
@@ -74,9 +74,9 @@ public class Banco {
      */
     public Conta criarConta(String nome, String senha) {
         int id = proximoId.getAndIncrement();
-        Conta conta = new Conta(id, 0.0, senha, nome);
+        String senhaHash = BCrypt.hashpw(senha, BCrypt.gensalt());
+        Conta conta = new Conta(id, 0.0, senhaHash, nome);
         contas.put(id, conta);
-        //Fazer o cadastro salvar no SQLite
         dao.inserir(conta);
         return conta;
     }
