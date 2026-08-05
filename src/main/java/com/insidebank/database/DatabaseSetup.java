@@ -15,11 +15,12 @@ public class DatabaseSetup {
 
             String sql = """
                 CREATE TABLE IF NOT EXISTS contas (
-                    id INTEGER PRIMARY KEY,
+                    id INTEGER NOT NULL,
                     nome TEXT NOT NULL,
                     senha TEXT NOT NULL,
                     saldo REAL NOT NULL,
-                    banco_id INTEGER NOT NULL DEFAULT 1
+                    banco_id INTEGER NOT NULL DEFAULT 1,
+                    PRIMARY KEY (id, banco_id)
                 );
             """;
 
