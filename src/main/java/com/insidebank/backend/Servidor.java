@@ -4,6 +4,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import com.insidebank.database.DatabaseSetup;
 
 public class Servidor {
     private static final int PORTA = 4444;
@@ -11,7 +12,9 @@ public class Servidor {
 
     public static void main(String[] args) {
         System.out.println("=== Servidor Bancário Iniciado na Porta " + PORTA + " ===");
-        
+
+        DatabaseSetup.inicializarBanco();
+
         Banco banco = new Banco();
         ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);
 

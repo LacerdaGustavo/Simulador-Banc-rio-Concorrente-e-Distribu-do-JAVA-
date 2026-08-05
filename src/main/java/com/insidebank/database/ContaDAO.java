@@ -32,7 +32,8 @@ public class ContaDAO {
                         rs.getInt("id"),
                         rs.getDouble("saldo"),
                         rs.getString("senha"),
-                        rs.getString("nome")
+                        rs.getString("nome"),
+                        rs.getInt("banco_id")
                 );
 
                 contas.add(conta);
@@ -50,8 +51,8 @@ public class ContaDAO {
     public void inserir(Conta conta) {
 
         String sql = """
-            INSERT INTO contas(id, nome, senha, saldo)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO contas(id, nome, senha, saldo, banco_id)
+            VALUES (?, ?, ?, ?, ?)
         """;
 
         try (
@@ -63,7 +64,7 @@ public class ContaDAO {
             stmt.setString(2, conta.getNome());
             stmt.setString(3, conta.getSenha());
             stmt.setDouble(4, conta.getSaldo());
-
+            stmt.setInt(5, conta.getBancoId());
             stmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -78,7 +79,7 @@ public class ContaDAO {
 
         String sql = """
             UPDATE contas
-            SET nome = ?, senha = ?, saldo = ?
+            SET nome = ?, senha = ?, saldo = ?, banco_id = ?
             WHERE id = ?
         """;
 
@@ -90,7 +91,8 @@ public class ContaDAO {
             stmt.setString(1, conta.getNome());
             stmt.setString(2, conta.getSenha());
             stmt.setDouble(3, conta.getSaldo());
-            stmt.setInt(4, conta.getId());
+            stmt.setInt(4, conta.getBancoId());
+            stmt.setInt(5, conta.getId());
 
             stmt.executeUpdate();
 

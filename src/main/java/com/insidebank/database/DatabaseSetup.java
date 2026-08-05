@@ -18,7 +18,8 @@ public class DatabaseSetup {
                     id INTEGER PRIMARY KEY,
                     nome TEXT NOT NULL,
                     senha TEXT NOT NULL,
-                    saldo REAL NOT NULL
+                    saldo REAL NOT NULL,
+                    banco_id INTEGER NOT NULL DEFAULT 1
                 );
             """;
 
