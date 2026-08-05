@@ -1,18 +1,21 @@
 package com.insidebank.controller;
 
+import com.insidebank.model.BancoOption;
 import com.insidebank.model.Sessao;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 /**
  * Controller do modal 1/3 do fluxo de Transferencia (transferir_destino.fxml).
- * Recolhe conta de destino + valor e, se validos, abre o modal de confirmacao.
+ * Recolhe banco + conta de destino + valor e, se validos, abre o modal de confirmacao.
  */
 public class TransferirDestinoController {
 
+    @FXML private ComboBox<BancoOption> cmbBanco;
     @FXML private TextField txtDestino;
     @FXML private TextField txtValor;
     @FXML private Label lblErro;
@@ -22,6 +25,9 @@ public class TransferirDestinoController {
 
     @FXML
     private void initialize() {
+        cmbBanco.getItems().addAll(BancoOption.BANCOS_DISPONIVEIS);
+        cmbBanco.getSelectionModel().selectFirst();
+
         if (btnFechar != null) {
             btnFechar.setOnAction(event -> onFechar());
             btnFechar.setOnMouseClicked(event -> onFechar());
@@ -32,18 +38,31 @@ public class TransferirDestinoController {
         this.dashboard = dashboard;
     }
 
+    // Atalhos assumem Banco Alpha (id 1), onde vivem as contas de teste fixas.
+    private void selecionarBancoAlpha() {
+        for (BancoOption opcao : cmbBanco.getItems()) {
+            if (opcao.getId() == 1) {
+                cmbBanco.getSelectionModel().select(opcao);
+                break;
+            }
+        }
+    }
+
     @FXML
     private void onSelecionarConta1() {
+        selecionarBancoAlpha();
         txtDestino.setText("1");
     }
 
     @FXML
     private void onSelecionarConta2() {
+        selecionarBancoAlpha();
         txtDestino.setText("2");
     }
 
     @FXML
     private void onSelecionarConta3() {
+        selecionarBancoAlpha();
         txtDestino.setText("3");
     }
 
@@ -56,6 +75,12 @@ public class TransferirDestinoController {
     private void onContinuar() {
         esconderErro();
 
+        BancoOption bancoSelecionado = cmbBanco.getValue();
+        if (bancoSelecionado == null) {
+            mostrarErro("Selecione o banco de destino.");
+            return;
+        }
+
         int destino;
         try {
             destino = Integer.parseInt(txtDestino.getText().trim());
@@ -64,7 +89,10 @@ public class TransferirDestinoController {
             return;
         }
 
-        if (destino == Sessao.getInstance().getContaId()) {
+        int bancoDestino = bancoSelecionado.getId();
+
+        if (bancoDestino == Sessao.getInstance().getBancoId()
+                && destino == Sessao.getInstance().getContaId()) {
             mostrarErro("Nao e possivel transferir para a propria conta.");
             return;
         }
@@ -83,7 +111,7 @@ public class TransferirDestinoController {
 
         TransferirConfirmarController confirmar = dashboard.abrirModal("/fxml/transferir_confirmar.fxml");
         if (confirmar != null) {
-            confirmar.configurar(dashboard, destino, valor);
+            confirmar.configurar(dashboard, bancoDestino, destino, valor);
         }
     }
 

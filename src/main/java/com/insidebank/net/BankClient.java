@@ -8,7 +8,7 @@ import java.net.Socket;
 /**
  * Cliente de socket para a interface JavaFX.
  * Fala exatamente o mesmo protocolo texto que o AtendimentoCliente.java
- * do servidor ja implementa (LOGIN;CONTA;SENHA / SACAR;VALOR / etc).
+ * do servidor ja implementa (LOGIN;BANCO;CONTA;SENHA / SACAR;VALOR / etc).
  *
  * Diferente do Cliente.java original (que roda em um loop bloqueante de
  * console), esta classe expoe um metodo por comando para ser chamado a
@@ -33,8 +33,8 @@ public class BankClient {
         return Resultado.fromResposta(resposta);
     }
 
-    public Resultado login(int contaId, String senha) throws IOException {
-        return enviar("LOGIN;" + contaId + ";" + senha);
+    public Resultado login(int bancoId, int contaId, String senha) throws IOException {
+        return enviar("LOGIN;" + bancoId + ";" + contaId + ";" + senha);
     }
 
     public Resultado sacar(double valor) throws IOException {
@@ -45,8 +45,8 @@ public class BankClient {
         return enviar("DEPOSITAR;" + valor);
     }
 
-    public Resultado transferir(int contaDestino, double valor) throws IOException {
-        return enviar("TRANSF;" + contaDestino + ";" + valor);
+    public Resultado transferir(int bancoDestino, int contaDestino, double valor) throws IOException {
+        return enviar("TRANSF;" + bancoDestino + ";" + contaDestino + ";" + valor);
     }
 
     public Resultado saldo() throws IOException {
@@ -58,8 +58,8 @@ public class BankClient {
     }
 
     /** Comando novo (ver AtendimentoCliente.java) - consulta o nome de uma conta pelo numero. */
-    public Resultado consultarNome(int contaId) throws IOException {
-        return enviar("NOME;" + contaId);
+    public Resultado consultarNome(int bancoId, int contaId) throws IOException {
+        return enviar("NOME;" + bancoId + ";" + contaId);
     }
 
     /** Comando novo (ver AtendimentoCliente.java) - lista o historico da conta logada. */
@@ -68,8 +68,8 @@ public class BankClient {
     }
 
     /** Comando novo (ver AtendimentoCliente.java) - cria uma conta nova. Nao precisa estar logado. */
-    public Resultado cadastrar(String nome, String senha) throws IOException {
-        return enviar("CADASTRAR;" + nome + ";" + senha);
+    public Resultado cadastrar(int bancoId, String nome, String senha) throws IOException {
+        return enviar("CADASTRAR;" + bancoId + ";" + nome + ";" + senha);
     }
 
     public boolean isConectado() {

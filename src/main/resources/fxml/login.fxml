@@ -4,6 +4,7 @@
 <?import javafx.geometry.Pos?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
@@ -19,6 +20,12 @@
   Tela: "Login | 1"  (Figma node 115:2)
   Coordenadas identicas as extraidas do Figma (frame 1440x1024), preservando
   fidelidade pixel-a-pixel. Ver THEME_DESIGN_TOKENS.md para a origem de cada cor.
+
+  Obs.: com o suporte a multiplos bancos, foi adicionado um ComboBox de
+  selecao de Banco logo apos o titulo. Os campos abaixo dele (CPF/Conta,
+  Senha, erro, checkbox, botoes) foram deslocados +60px verticalmente em
+  relacao ao layout original do Figma para abrir espaco, mantendo o
+  rodape (copyright) na posicao original.
 -->
 <Pane prefWidth="1440.0" prefHeight="1024.0"
       xmlns="http://javafx.com/javafx"
@@ -45,43 +52,49 @@
         </ImageView>
     </StackPane>
 
+    <!-- Campo Banco (novo - selecao da instituicao bancaria) -->
+    <Label text="Banco" styleClass="text-body" layoutX="65" layoutY="284"/>
+    <ComboBox fx:id="cmbBanco" promptText="Selecione o banco"
+              styleClass="input-field"
+              layoutX="65" layoutY="312" prefWidth="580" prefHeight="60"/>
+
     <!-- Campo CPF -->
-    <Label text="CPF" styleClass="text-body" layoutX="65" layoutY="284"/>
+    <Label text="CPF" styleClass="text-body" layoutX="65" layoutY="344"/>
     <TextField fx:id="txtConta" promptText="Digite o seu CPF (ou numero da conta)"
                styleClass="input-field"
-               layoutX="65" layoutY="312" prefWidth="580" prefHeight="60"/>
+               layoutX="65" layoutY="372" prefWidth="580" prefHeight="60"/>
 
     <!-- Campo Senha -->
-    <Label text="Senha" styleClass="text-body" layoutX="65" layoutY="397"/>
+    <Label text="Senha" styleClass="text-body" layoutX="65" layoutY="457"/>
     <PasswordField fx:id="txtSenha" promptText="Digite a sua Senha"
                     styleClass="input-field"
-                    layoutX="65" layoutY="424" prefWidth="580" prefHeight="60"/>
+                    layoutX="65" layoutY="484" prefWidth="580" prefHeight="60"/>
 
     <!-- Mensagem de erro (nao existe no mock estatico - adicionado para feedback real) -->
     <Label fx:id="lblErro" styleClass="text-small" style="-fx-text-fill:#FF6B6B;"
-           layoutX="65" layoutY="487" prefWidth="580" visible="false" managed="false"/>
+           layoutX="65" layoutY="547" prefWidth="580" visible="false" managed="false"/>
 
     <!-- Checkbox "confiar neste computador" -->
     <CheckBox fx:id="chkConfiar" styleClass="check-gold"
-              layoutX="66" layoutY="513"/>
+              layoutX="66" layoutY="573"/>
     <Label text="Confiar neste computador por 14 dias." styleClass="text-body"
-           layoutX="105" layoutY="513"/>
+           layoutX="105" layoutY="573"/>
 
     <!-- Botao primario -->
     <Button fx:id="btnLogin" text="Fazer Login" styleClass="btn-primary"
             onAction="#onFazerLogin"
-            layoutX="65" layoutY="579" prefWidth="580" prefHeight="60"/>
+            layoutX="65" layoutY="639" prefWidth="580" prefHeight="60"/>
 
     <Label styleClass="text-small, text-muted" wrapText="true"
-           layoutX="65" layoutY="653" prefWidth="580" alignment="CENTER" style="-fx-text-alignment:center;"
+           layoutX="65" layoutY="713" prefWidth="580" alignment="CENTER" style="-fx-text-alignment:center;"
            text="Ao fazer Login, voce concorda com nossos Termos de Servico e Politica de Privacidade"/>
 
-    <Line startX="0" endX="580" layoutX="65" layoutY="710" stroke="rgba(255,255,255,0.1)"/>
+    <Line startX="0" endX="580" layoutX="65" layoutY="770" stroke="rgba(255,255,255,0.1)"/>
 
     <!-- Botao secundario -->
     <Button text="Cadastrar-se" styleClass="btn-glass"
             onAction="#onCadastrarSe"
-            layoutX="65" layoutY="752" prefWidth="580" prefHeight="60"/>
+            layoutX="65" layoutY="812" prefWidth="580" prefHeight="60"/>
 
     <Label text="Todos os direitos reservados. (c) InsideBank 2024"
            styleClass="text-small, text-muted"

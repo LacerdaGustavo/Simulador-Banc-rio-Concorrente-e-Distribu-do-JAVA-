@@ -23,22 +23,24 @@ public class TransferirConfirmarController {
     @FXML private Button btnConfirmar;
 
     private DashboardController dashboard;
+    private int bancoDestino;
     private int contaDestino;
     private double valor;
 
-    public void configurar(DashboardController dashboard, int contaDestino, double valor) {
+    public void configurar(DashboardController dashboard, int bancoDestino, int contaDestino, double valor) {
         this.dashboard = dashboard;
+        this.bancoDestino = bancoDestino;
         this.contaDestino = contaDestino;
         this.valor = valor;
 
-        lblContaDestino.setText("Conta " + contaDestino);
+        lblContaDestino.setText("Banco " + bancoDestino + ", Conta " + contaDestino);
         lblValor.setText(DashboardController.formatarMoeda(String.valueOf(valor)));
 
         BankClient client = Sessao.getInstance().getClient();
         Task<Resultado> tarefaNome = new Task<>() {
             @Override
             protected Resultado call() throws Exception {
-                return client.consultarNome(contaDestino);
+                return client.consultarNome(bancoDestino, contaDestino);
             }
         };
         tarefaNome.setOnSucceeded(evt -> {
@@ -62,7 +64,7 @@ public class TransferirConfirmarController {
         Task<Resultado> tarefaTransf = new Task<>() {
             @Override
             protected Resultado call() throws Exception {
-                return client.transferir(contaDestino, valor);
+                return client.transferir(bancoDestino, contaDestino, valor);
             }
         };
 

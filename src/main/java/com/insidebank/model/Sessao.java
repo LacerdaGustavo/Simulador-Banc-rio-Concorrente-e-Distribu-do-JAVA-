@@ -13,6 +13,7 @@ public class Sessao {
     private static final Sessao INSTANCE = new Sessao();
 
     private BankClient client;
+    private int bancoId;
     private int contaId;
     private String tema = "dark"; // "dark" ou "light" - ver Configuracoes > Geral > Tema
     // quando uma chamada externa quiser abrir Configuracoes já com um painel selecionado,
@@ -32,6 +33,14 @@ public class Sessao {
 
     public void setClient(BankClient client) {
         this.client = client;
+    }
+
+    public int getBancoId() {
+        return bancoId;
+    }
+
+    public void setBancoId(int bancoId) {
+        this.bancoId = bancoId;
     }
 
     public int getContaId() {
@@ -63,6 +72,7 @@ public class Sessao {
             client.fechar();
         }
         client = null;
+        bancoId = 0;
         contaId = 0;
     }
 }

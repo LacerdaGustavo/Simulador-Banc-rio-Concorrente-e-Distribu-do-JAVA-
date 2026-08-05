@@ -95,6 +95,7 @@ public class ConfiguracoesController {
     // ===================== Minha Conta =====================
 
     private void carregarMinhaConta() {
+        int meuBancoId = Sessao.getInstance().getContaId();
         int minhaContaId = Sessao.getInstance().getContaId();
         lblNumeroConta.setText(String.valueOf(minhaContaId));
 
@@ -105,7 +106,7 @@ public class ConfiguracoesController {
         Task<Resultado> tarefa = new Task<>() {
             @Override
             protected Resultado call() throws Exception {
-                return client.consultarNome(minhaContaId);
+                return client.consultarNome(meuBancoId, minhaContaId);
             }
         };
         tarefa.setOnSucceeded(evt -> {
