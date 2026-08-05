@@ -28,6 +28,10 @@ public class Conta {
         this(id, saldoInicial, senha, "Cliente " + id);
     }
 
+    public Conta(int id, double saldoInicial, String senha, String nome) {
+    this(id, saldoInicial, senha, nome, 1); // banco padrão (id 1), até o suporte multi-banco entrar
+    }
+
     public Conta(int id, double saldoInicial, String senha, String nome, int bancoId) {
         this.id = id;
         this.saldo = saldoInicial;
