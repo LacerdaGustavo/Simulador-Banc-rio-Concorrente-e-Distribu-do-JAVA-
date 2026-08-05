@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class Conta {
     private final int id;
@@ -59,8 +60,8 @@ public class Conta {
     }
 
     public boolean autenticar(String senhaTentativa) {
-        return this.senha.equals(senhaTentativa);
-    }
+    return BCrypt.checkpw(senhaTentativa, this.senha);
+}
 
     public double getSaldo() {
         lock.lock();
