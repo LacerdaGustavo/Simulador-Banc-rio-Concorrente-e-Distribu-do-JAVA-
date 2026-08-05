@@ -2,6 +2,7 @@ package com.insidebank;
 
 import java.io.IOException;
 
+import com.insidebank.database.DatabaseSetup;
 import com.insidebank.model.Sessao;
 
 import javafx.application.Application;
@@ -19,6 +20,8 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        DatabaseSetup.inicializarBanco();
+
         stagePrincipal = stage;
         stage.setTitle("InsideBank");
         stage.setResizable(true);

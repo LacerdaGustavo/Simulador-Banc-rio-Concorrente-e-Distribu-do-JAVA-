@@ -1,6 +1,0 @@
-Rode ../../../../download-assets.sh (na raiz do projeto) para preencher
-esta pasta com as imagens e icones extraidos do Figma.
-
-Veja ASSETS_TODO.md (na raiz do projeto) para saber quais componentes ja
-usam um placeholder no FXML e precisam ser trocados pelo asset real depois
-do download.
