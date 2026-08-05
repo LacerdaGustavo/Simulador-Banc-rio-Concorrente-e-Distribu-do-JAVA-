@@ -13,6 +13,7 @@ public class Conta {
     private double saldo;
     private final String senha;
     private final String nome;
+    private final int bancoId;
 
     // Historico de movimentacoes (usado pela tela de Extrato da interface JavaFX).
     // Lista sincronizada porque pode ser lida/escrita por threads concorrentes
@@ -27,15 +28,16 @@ public class Conta {
         this(id, saldoInicial, senha, "Cliente " + id);
     }
 
-    public Conta(int id, double saldoInicial, String senha, String nome) {
+    public Conta(int id, double saldoInicial, String senha, String nome, int bancoId) {
         this.id = id;
         this.saldo = saldoInicial;
         this.senha = senha;
         this.nome = nome;
+        this.bancoId = bancoId;
     }
 
-    public int getId() {
-        return id;
+    public int getBancoId() {
+        return bancoId;
     }
 
     public String getNome() {
