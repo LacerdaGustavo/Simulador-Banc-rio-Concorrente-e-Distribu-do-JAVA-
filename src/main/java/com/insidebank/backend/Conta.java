@@ -50,7 +50,12 @@ public class Conta {
 
 
     public String getSenha() {
-    return senha;
+        return senha;
+    
+    }
+
+    public int getId() {
+        return id;
     }
 
     private void registrar(String descricao) {
