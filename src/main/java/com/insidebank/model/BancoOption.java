@@ -35,6 +35,7 @@ public class BancoOption {
     /** Lista fixa de bancos disponiveis - espelha Banco.java no servidor. */
     public static final BancoOption[] BANCOS_DISPONIVEIS = {
             new BancoOption(1, "Banco Alpha"),
-            new BancoOption(2, "Banco Beta")
+            new BancoOption(2, "Banco Beta"),
+            new BancoOption(3, "Banco Gamma")
     };
 }

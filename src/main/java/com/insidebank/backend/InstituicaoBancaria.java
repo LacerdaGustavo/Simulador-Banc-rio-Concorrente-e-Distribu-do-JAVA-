@@ -38,6 +38,10 @@ public class InstituicaoBancaria {
     /** Usado ao carregar contas existentes do banco de dados (ver Banco). */
     public void adicionarConta(Conta conta) {
         contas.put(conta.getId(), conta);
+        
+         // Garante que o próximo ID será sempre maior que qualquer conta já existente.
+        proximoId.updateAndGet(idAtual -> Math.max(idAtual, conta.getId() + 1));
+
     }
 
     /**

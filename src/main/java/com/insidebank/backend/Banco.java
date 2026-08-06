@@ -11,6 +11,7 @@ public class Banco {
     // IDs fixos das instituicoes pre-cadastradas no sistema.
     private static final int BANCO_ALPHA_ID = 1;
     private static final int BANCO_BETA_ID = 2;
+    private static final int BANCO_GAMMA_ID = 3;
 
     // Cada instituicao bancaria isola suas proprias contas.
     private final Map<Integer, InstituicaoBancaria> instituicoes = new ConcurrentHashMap<>();
@@ -21,8 +22,11 @@ public class Banco {
 
         InstituicaoBancaria bancoAlpha = new InstituicaoBancaria(BANCO_ALPHA_ID, "Banco Alpha", 4);
         InstituicaoBancaria bancoBeta = new InstituicaoBancaria(BANCO_BETA_ID, "Banco Beta", 1);
+        InstituicaoBancaria bancoGamma = new InstituicaoBancaria(BANCO_GAMMA_ID, "Banco Gamma", 1);
+
         instituicoes.put(BANCO_ALPHA_ID, bancoAlpha);
         instituicoes.put(BANCO_BETA_ID, bancoBeta);
+        instituicoes.put(BANCO_GAMMA_ID, bancoGamma);
 
         List<Conta> contasSalvas = dao.listarTodas();
 
