@@ -40,7 +40,7 @@
 
     <!-- Titulo -->
     <Label text="Entre com sua Conta" styleClass="text-display, text-h1"
-           layoutX="65" layoutY="196"/>
+           layoutX="65" layoutY="176"/>
 
     <!-- Ilustracao lateral -->
     <StackPane layoutX="720" layoutY="46" prefWidth="678" prefHeight="932"
@@ -53,10 +53,10 @@
     </StackPane>
 
     <!-- Campo Banco (novo - selecao da instituicao bancaria) -->
-    <Label text="Banco" styleClass="text-body" layoutX="65" layoutY="284"/>
+    <Label text="Banco" styleClass="text-body" layoutX="65" layoutY="244"/>
     <ComboBox fx:id="cmbBanco" promptText="Selecione o banco"
               styleClass="input-field"
-              layoutX="65" layoutY="312" prefWidth="580" prefHeight="60"/>
+              layoutX="65" layoutY="278" prefWidth="580" prefHeight="60"/>
 
     <!-- Campo CPF -->
     <Label text="CPF" styleClass="text-body" layoutX="65" layoutY="344"/>
@@ -96,7 +96,7 @@
             onAction="#onCadastrarSe"
             layoutX="65" layoutY="812" prefWidth="580" prefHeight="60"/>
 
-    <Label text="Todos os direitos reservados. (c) InsideBank 2024"
+    <Label text="Todos os direitos reservados. (c) InsideBank 2026"
            styleClass="text-small, text-muted"
            layoutX="65" layoutY="963" prefWidth="580" alignment="CENTER" style="-fx-text-alignment:center;"/>
 
