@@ -36,6 +36,16 @@ public class ContaDAO {
                         rs.getInt("banco_id")
                 );
 
+                    // DEBUG: mostra exatamente o que foi carregado do SQLite
+                    System.out.println(
+                        "Carregou -> Banco "
+                        + conta.getBancoId()
+                        + " | Conta "
+                        + conta.getId()
+                        + " | Saldo R$ "
+                        + conta.getSaldo()
+                    );
+
                 contas.add(conta);
             }
 
@@ -79,8 +89,8 @@ public class ContaDAO {
 
         String sql = """
             UPDATE contas
-            SET nome = ?, senha = ?, saldo = ?, banco_id = ?
-            WHERE id = ?
+            SET nome = ?, senha = ?, saldo = ?
+            WHERE id = ? AND banco_id = ?
         """;
 
         try (
@@ -91,16 +101,25 @@ public class ContaDAO {
             stmt.setString(1, conta.getNome());
             stmt.setString(2, conta.getSenha());
             stmt.setDouble(3, conta.getSaldo());
-            stmt.setInt(4, conta.getBancoId());
-            stmt.setInt(5, conta.getId());
+            stmt.setInt(4, conta.getId());
+            stmt.setInt(5, conta.getBancoId());
+            
 
-            stmt.executeUpdate();
+            int linhas = stmt.executeUpdate();
+                    System.out.println(
+            "UPDATE -> Banco "
+            + conta.getBancoId()
+            + " Conta "
+            + conta.getId()
+            + " Linhas = "
+            + linhas
+        );
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-
+  
 
 }
